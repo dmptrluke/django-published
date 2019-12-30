@@ -33,7 +33,7 @@ DATABASES = {
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-ROOT_URLCONF = 'gatekeeper.tests.urls'
+ROOT_URLCONF = 'published.tests.urls'
 DEBUG = True
 
 TEMPLATES = [

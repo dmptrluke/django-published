@@ -1,49 +1,43 @@
-import os
-from setuptools import find_packages, setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
-    README = readme.read()
+import setuptools
 
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
-setup(
-    name='django-model-gatekeeper',
-    version='0.1.7',
-    packages=find_packages(exclude=['tests']),
-    include_package_data=True,
+version = {}
+with open("published/version.py") as fp:
+    exec(fp.read(), version)
+
+install_requires = [
+    'pytz'
+]
+
+setuptools.setup(
+    name="django-published",
+    version=version['__version__'],
+    author="Luke Rogers",
+    author_email="lukeroge@gmail.com",
     license='MIT License, see LICENSE',
-    description=(
-        "Django abstract classes to allow Set it and Forget it! "
-        "behavior for models.",
-    ),
-    long_description=README,
-    long_description_content_type='text/plain',
-    url='http://github.com/wgbh/django-model-gatekeeper/',
-    author='Bob Donahue',
-    author_email='bob_donahue@wgbh.org',
-    install_requires=[
-        'pytz',
-    ],
+    description="Control public visibility of model instances.",
+    install_requires=install_requires,
+    extras_require={
+        ':python_version == "3.6"': [
+            'dataclasses',
+        ],
+    },
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/dmptrluke/django-published",
+    packages=setuptools.find_packages(),
+    include_package_data=True,
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Programming Language :: Python :: 3.8',
+        "Framework :: Django",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
     ],
+    python_requires='>=3.6',
 )
