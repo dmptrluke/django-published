@@ -175,8 +175,7 @@ This can be done using `add_to_readonly_fields`
 Example code:
 
 ```python
-from published.admin_helpers import add_to_readonly_fields
-from published.admin import PublishedAdmin
+from published.admin import PublishedAdmin, add_to_readonly_fields
 
 class MyModelAdmin(PublishedAdmin):
     readonly_fields = ['my_field_1', 'my_field_2'] + add_to_readonly_fields()
@@ -190,8 +189,7 @@ To show the status in an admin list view, `show_publish_status` needs to be adde
 This can be added automatically with the `add_to_list_display` method, e.g.:
 
 ```python
-from published.admin_helpers import add_to_list_display
-from published.admin import PublishedAdmin
+from published.admin import PublishedAdmin, add_to_list_display
 
 class MyModelAdmin(PublishedAdmin):
     list_display = ['pk', 'title', ] + add_to_list_display()
@@ -211,8 +209,7 @@ There's also a `collapse` attribute
 
 
 ```python
-from published.admin_helpers import add_to_fieldsets
-from published.admin import PublishedAdmin
+from published.admin import PublishedAdmin, add_to_fieldsets
 
 class MyModelAdmin(PublishedAdmin):
     fieldsets = (
@@ -227,8 +224,7 @@ Or you can include them as part of another section; in this case you'd
 set `section=False`
 
 ```python
-from published.admin_helpers import add_to_fieldsets
-from published.admin import PublishedAdmin
+from published.admin import PublishedAdmin, add_to_fieldsets
 
 class MyModelAdmin(PublishedAdmin):
     fieldsets = (
