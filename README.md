@@ -26,7 +26,7 @@ INSTALLED_APPS = [
 
 ## Gatekeeping Models
 
-The main use for django-published is where you have a model with many
+The main use for *django-published* is where you have a model with many
 instances, but you only want some to be "live" on the site.
 
 A good example is a generic "Article" model:
@@ -158,10 +158,12 @@ If you need to check if an object is considered "available" in a Django template
 
 # The Admin Interface
 
-*django-published* has several helper functions to customize the admin (it
-doesn't have the admin methods because there's no way to know if there
-are other ModelAdmins being used, and Python's MRO doesn't allow for
-chaining). All of them are in the `gatekeeper.admin_helpers` file.
+*django-published* has several helper functions to customize the admin.
+All of them can be found in the  `django-published.admin` module.
+
+## PublishedAdmin
+All of the below functions require the use of the `PublishedAdmin` abstract class instead
+of the default `ModelAdmin` class. You can see examples of this in all of the code below.
 
 ## Readonly Fields
 
@@ -197,7 +199,7 @@ class MyModelAdmin(PublishedAdmin):
 
 ## Fieldsets
 
-There are two ways to include the gatekeeper fields using the
+There are two ways to include the *django-published* fields using the
 `add_to_fieldsets` method:
 
 ### As a separate section
@@ -244,7 +246,7 @@ And of course you can just do it all manually with the editable `live_as_of`, `p
 This software is released under the MIT license.
 ```
 Copyright (c) 2019 WGBH Educational Foundation
-Copyright (c) 2019 Luke Rogers
+Copyright (c) 2019-2020 Luke Rogers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

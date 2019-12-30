@@ -100,6 +100,6 @@ def add_to_fieldsets(section=True, collapse=False):
             d = {'classes': ('collapse',), 'fields': fields, }
         else:
             d = {'fields': fields, }
-        s = ('Gatekeeper', d)
+        s = ('Publishing', d)
         return s
     return fields
