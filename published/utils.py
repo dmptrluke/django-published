@@ -2,11 +2,12 @@ from datetime import datetime
 
 import pytz
 
+
 """
  THIS IS THE MAIN GATEKEEPER
- 
+
  This controls WHICH records show up on a website, based upon a set of rules.
- 
+
  It returns True or False given:
     1. the requests.user object (which can be None)
     2. one of the PBSMM objects (Episode, Season, Site, Special)
@@ -35,13 +36,13 @@ import pytz
     RULE 4:   Objects are shown on model listing pages to the public ONLY IF:
         a.  The object is "live" (see Rule 2)
         b.  Any PARENT objects ARE ALSO "live" (but see exception below)
-        
+
 
 STANDLONE OBJECTS:
 
     For objects with the treat_as_standalone field, and where that field == 1, the above rules apply
     EXCEPT FOR Rule 4b:   "standalone" objects do NOT CHECK their parents' publish states.
-    
+
 """
 
 
@@ -49,22 +50,23 @@ def can_object_page_be_shown(user, this_object):
     """
     RAD: 4 Oct 2018 --- so a weird condition happened, and I'm not sure what the appropriate
         logic ought to be:
-        
+
         If a STANDALONE Episode has a parental Show that has publish_status = -1, does the episode
         get blocked or not?
-        
+
         On one hand, it should be YES, because if the entire SHOW is "permanently offline", then that
         logically should extend to their children.
-        
+
         On the OTHER HAND, the entire point of "standalone" is "do NOT consult the parents", so it shouldn't
-        MATTER what the 
-    
+        MATTER what the
+
     """
+    # noinspection PyBroadException
     try:
         if user.is_staff:  # admin users can always see pages
             if this_object.publish_status >= 0 or this_object.treat_as_standalone == 1:
                 return True  # I can see everything except specifically turned-off objects because I'm an admin
-    except:
+    except Exception:  # noqa: E722
         pass  # I am not logged in - continue
 
     if this_object.publish_status == 1:  # this object is ALWAYS live

@@ -1,4 +1,5 @@
 import os
+
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 SECRET_KEY = 'fake-key'

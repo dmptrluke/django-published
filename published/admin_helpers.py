@@ -12,7 +12,7 @@ GATEKEEPER_ACTIONS = [
 def add_to_readonly_fields():
     """
     This adds the gatekeeper fields to the readonly_fields list.
-    
+
     Usage (in your model admin):
         def get_readonly_fields(self, obj=None):
             return self.readonly_fields + gatekeeper_add_to_readonly_fields()
@@ -33,11 +33,11 @@ def add_to_fieldsets(section=True, collapse=False):
     Options:
         Section: you can add the fields either as it's own section or as part of a section.
         Collapse: whether the section should be collapsable or not.
-        
+
     How to use:
         # section = False
         fieldsets = (
-            (None, { 'fields': ( ('pk',), gatekeeper_add_to_fieldsets(section=False), ), }), 
+            (None, { 'fields': ( ('pk',), gatekeeper_add_to_fieldsets(section=False), ), }),
         )
 
         # section = True
@@ -57,4 +57,3 @@ def add_to_fieldsets(section=True, collapse=False):
         s = ('Gatekeeper', d)
         return s
     return fields
-

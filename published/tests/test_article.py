@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 
-import pytz
 from django.contrib.auth.models import User
 from django.test import TestCase
 
+import pytz
+
 from published.utils import can_object_page_be_shown
+
 from .models import PublishedArticleTestModel
 
 

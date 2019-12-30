@@ -21,9 +21,9 @@ Other features:
 INSTALLED_APPS = [
     ...
     'published',
-]    
+]
 ```
-        
+
 
 ## Gatekeeping Models
 
@@ -60,7 +60,7 @@ The superclass creates two fields:
     it's not live on the site.
 
 2.  `publish_status` - this has 4 possible values:
-    
+
        - 0 = "use live\_as\_of" date to determine if the object is
          available to the public
        - 1 = "always on" - hard-wired to be always available to the
@@ -98,7 +98,7 @@ What's happening behind the scenes:
 
 1.  In the ListView, the gatekeeper is filtering the model with the
     following rules:
-    
+
     > 1.  If the user is logged into the Admin and
     >     <span class="title-ref">publish\_status</span> \!= -1,
     >     \_include the model [instance]()
@@ -194,8 +194,8 @@ Example code:
 from published.admin_helpers import add_to_readonly_fields
 from published.admin import PublishedAdmin
 
-class MyModelAdmin(PublishedAdmin): 
-    readonly_fields = ['my_field_1', 'my_field_2'] + add_to_readonly_fields()   
+class MyModelAdmin(PublishedAdmin):
+    readonly_fields = ['my_field_1', 'my_field_2'] + add_to_readonly_fields()
  ```
 
 ## List Display
@@ -221,8 +221,8 @@ method, e.g.:
 from published.admin_helpers import add_to_list_display
 from published.admin import PublishedAdmin
 
-class MyModelAdmin(PublishedAdmin): 
-    list_display = ['pk', 'title', ] + add_to_list_display() 
+class MyModelAdmin(PublishedAdmin):
+    list_display = ['pk', 'title', ] + add_to_list_display()
 ```
 
 ## Fieldsets
@@ -242,11 +242,11 @@ There's also a `collapse` attribute
 from published.admin_helpers import add_to_fieldsets
 from published.admin import PublishedAdmin
 
-class MyModelAdmin(PublishedAdmin): 
-    fieldsets = ( 
+class MyModelAdmin(PublishedAdmin):
+    fieldsets = (
         (None, ...),
         add_to_fieldsets(section=True, collapse=False)
-    ) 
+    )
 ```
 
 ### Included as part of a section
@@ -255,10 +255,10 @@ Or you can include them as part of another section; in this case you'd
 set `section=False`
 
 ```python
-from published.admin_helpers import add_to_fieldsets 
+from published.admin_helpers import add_to_fieldsets
 from published.admin import PublishedAdmin
 
-class MyModelAdmin(PublishedAdmin): 
+class MyModelAdmin(PublishedAdmin):
     fieldsets = (
         (None, {
             'fields': (

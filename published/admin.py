@@ -1,8 +1,9 @@
 from datetime import datetime
 
-import pytz
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+
+import pytz
 
 
 def is_in_the_future(dt):
@@ -21,7 +22,7 @@ class PublishedAdmin(admin.ModelAdmin):
     Because of the Python MRO, you can't put the typical ModelAdmin methods here, because
     if you have >1 abstract baseclasses to your ModelAdmin, the Python MRO will stop at the
     first instance of the method, e.g.:
-    
+
         class Foo1(admin.ModelAdmin):
             def get_readonly_fields(self, obj=None):
                 return self.readonly_fields + ('foo1_field')
@@ -32,7 +33,7 @@ class PublishedAdmin(admin.ModelAdmin):
             pass
 
     will stop at Foo1, and never get to Foo2.
-    
+
     To get around this, there are "helper methods" in admin_helpers.py, you'll still have
     to create methods in your ModelAdmin classes using either PublishedAdmin or
     GatekeeperSerialAdmin but you can call these from there to get the desired behavior.

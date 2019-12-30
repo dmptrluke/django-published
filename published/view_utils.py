@@ -1,7 +1,8 @@
 from datetime import datetime
 
-import pytz
 from django.db.models import Q
+
+import pytz
 
 
 def view_gatekeeper(qs, is_auth):
@@ -10,7 +11,7 @@ def view_gatekeeper(qs, is_auth):
     that are combined (e.g., on the Watch page, but also on the other episodic pages for things like "More from...").
     To make THAT work, you need to know which of those potentially associated objects are actually available on
     the site.
-    
+
     This DOES take Administrative login into account (if is_auth == True), in which case the queryset is passed
     through unchecked.
 
@@ -37,8 +38,9 @@ def object_gatekeeper(obj, is_auth, ignore_standalone=False):
     if is_auth:
         return True
     else:
+        # noinspection PyBroadException
         try:
             return obj.available_to_public
-        except:
+        except Exception:  # noqa: E722
             pass
     return False

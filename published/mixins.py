@@ -1,8 +1,9 @@
 from datetime import datetime
 
-import pytz
 from django.db.models import Q
 from django.http import Http404
+
+import pytz
 
 from .utils import can_object_page_be_shown
 
@@ -26,7 +27,7 @@ class PublishedListMixin:
 class PublishedDetailMixin:
     """
     This is for detail views that apply to all object DetailView classes.
-    
+
     WE CANNOT USE the "available_to_public" property as a quick, "simple" workaround because you have to be able
     to reliably send the self.request.user to the gatekeeper (available_to_public is really only supposed
     to be used as a test within TEMPLATES, i.e., AFTER the gatekeeper has done its job!)
