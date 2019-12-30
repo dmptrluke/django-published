@@ -10,7 +10,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
-    'gatekeeper',
+    'published',
 ]
 
 MIDDLEWARE_CLASSES = (

@@ -16,21 +16,21 @@ from .constants import *
  How this works:
 
     There are four possible publish states an object can be in.
-        1. (publish_status =  1): Object is AVAILABLE - think of this as a ALWAYS ON switch
-        2. (publish_status =  0): Object is CONDITIONALLY AVAILABLE - the "live_as_of" date is in the past
-        3. (publish_status =  0): Object is PENDING AVAILABLE - the "live_as_of" date is still in the future
-        5. (publish_status = -1): Object is ALWAYS UNAVAILABLE - this is the ALWAYS OFF Switch
+        1. (publish_status = AVAILABLE): Object is AVAILABLE - think of this as a ALWAYS ON switch
+        2. (publish_status = AVAILABLE_AFTER): Object is CONDITIONALLY AVAILABLE - the "live_as_of" date is in the past
+        3. (publish_status = AVAILABLE_AFTER): Object is PENDING AVAILABLE - the "live_as_of" date is in the future
+        5. (publish_status = NEVER_AVAILABLE): Object is ALWAYS UNAVAILABLE - this is the ALWAYS OFF Switch
 
  Page requesters can either be logged in to the Django Admin (i.e., staff) or not (i.e., the general public)
 
     RULE 1:   Objects ONLY EVER appear to the public (i.e., 'are live') if:
-        a. The publish_status = 1 regardless of the live_as_of date
-        b. The publish_status = 0 AND the live_as_of date exists and is in the past.
+        a. The publish_status = AVAILABLE regardless of the live_as_of date
+        b. The publish_status = AVAILABLE_AFTER AND the live_as_of date exists and is in the past.
 
-    RULE 2:   Objects with a publish_status of -1 don't appear on the site to the public.
+    RULE 2:   Objects with a publish_status of NEVER_AVAILABLE don't appear on the site to the public.
 
     RULE 3:   Objects are shown on model listing pages to the public ONLY IF:
-        a.  The object is "live" (see prior rules)
+          a.  The object is "live" (see prior rules)
 """
 
 
@@ -56,11 +56,11 @@ def object_available(user, this_object):
             if not delta:
                 return False
         else:
-            # this should not happen, lets default to no access
+            # this should not happen, default to no access
             return False
         return True
 
-    # this should not happen, lets default to no access
+    # this should not happen, default to no access
     return False
 
 

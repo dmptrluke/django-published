@@ -6,9 +6,9 @@ from .utils import object_available_to_public
 
 
 class PublishedAbstractModel(models.Model):
-    publish_status = models.IntegerField(
+    publish_status = models.SmallIntegerField(
         'Publish',
-        default=1, null=False,
+        default=AVAILABLE, null=False,
         choices=PUBLISH_CHOICES
     )
 

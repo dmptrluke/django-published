@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from published.utils import object_available
 
+from ..constants import *
 from .models import PublishedArticleTestModel
 
 
@@ -24,18 +25,22 @@ class GatekeeperArticleTest(TestCase):
         later = now + timedelta(days=7)
         wayback = now - timedelta(days=30)
         # Test cases
-        # 1. Default - NOT LIVE YET
-        cls.a01 = PublishedArticleTestModel.objects.create(pk=1, title='Article Test 1')
         # 2. Next week - NOT LIVE YET
-        cls.a02 = PublishedArticleTestModel.objects.create(pk=2, title='Article Test 2', live_as_of=later)
+        cls.a02 = PublishedArticleTestModel.objects.create(pk=2, title='Article Test 2', live_as_of=later,
+                                                           publish_status=AVAILABLE_AFTER)
+
         # 3. Last week - IS LIVE
-        cls.a03 = PublishedArticleTestModel.objects.create(pk=3, title='Article Test 3', live_as_of=last_week)
+        cls.a03 = PublishedArticleTestModel.objects.create(pk=3, title='Article Test 3', live_as_of=last_week,
+                                                           publish_status=AVAILABLE_AFTER)
         # 4. earlier + PERM LIVE
         cls.a04 = PublishedArticleTestModel.objects.create(pk=4, title='Article Test 4', live_as_of=earlier,
-                                                           publish_status=1)
+                                                           publish_status=AVAILABLE)
         # 5. wayback - but put offline
-        cls.a05 = PublishedArticleTestModel.objects.create(pk=5, title='Article Test 5', live_as_of=earlier,
-                                                           publish_status=-1)
+        cls.a05 = PublishedArticleTestModel.objects.create(pk=5, title='Article Test 5', live_as_of=wayback,
+                                                           publish_status=NEVER_AVAILABLE)
+        # 6. later - but PERM LIVE
+        cls.a06 = PublishedArticleTestModel.objects.create(pk=6, title='Article Test 6', live_as_of=later,
+                                                           publish_status=AVAILABLE)
 
     def setUp(self):
         self.client.login(username='gktest', password='1@3$5')
@@ -49,8 +54,8 @@ class GatekeeperArticleTest(TestCase):
         for a in articles:
             if a.available_to_public:
                 n += 1
-        self.assertEqual(n, 2)
-        print("Articles live: should get 2, and got ", n)
+        self.assertEqual(n, 3)
+        print("Articles live: should get 3, and got ", n)
 
     def test_how_many_are_live_to_admin(self):
         # this should be 4 - you don't see anything that has publish_status = -1
@@ -62,9 +67,9 @@ class GatekeeperArticleTest(TestCase):
                 n += 1
             else:
                 n_offline += 1
-        self.assertEqual(n, 4)
-        self.assertEqual(n_offline, 1)
-        print("Articles available to admin (should be 4): ", n, ' Offline (should be 1): ', n_offline)
+        self.assertEqual(n, 5)
+        self.assertEqual(n_offline, 0)
+        print("Articles available to admin (should be 5): ", n, ' Offline (should be 0): ', n_offline)
 
     def run_object_conditions(self, pk, label, expect):
         test = PublishedArticleTestModel.objects.get(pk=pk)
@@ -73,15 +78,9 @@ class GatekeeperArticleTest(TestCase):
         result = object_available(None, test)
         return result
 
-    def test_pending_is_not_live(self):
-        """
-        Pending --- live_as_of = None, publish_status = None --- is not live.
-        """
-        self.assertFalse(self.run_object_conditions(1, 'Preview is not live', False))
-
     def test_offline_is_not_live(self):
         """
-        Permanently Offline --- publish_status = -1 --- is not live.
+        Permanently Offline --- publish_status = NEVER_AVAILABLE --- is not live.
         """
         self.assertFalse(self.run_object_conditions(5, 'Offline is not live', False))
 
@@ -91,14 +90,20 @@ class GatekeeperArticleTest(TestCase):
         """
         self.assertFalse(self.run_object_conditions(2, 'Future is not live', False))
 
+    def test_future_but_available_is_live(self):
+        """
+        Staged for publish --- live_as_of > now --- is not live
+        """
+        self.assertTrue(self.run_object_conditions(6, 'Perm Live but future is live', True))
+
     def test_perm_live_is_live(self):
         """
-        Permanently live --- publish_status = 1, live_as_of <= now --- is live
+        Permanently live --- publish_status = AVAILABLE, live_as_of <= now --- is live
         """
         self.assertTrue(self.run_object_conditions(4, 'Perm Live is live', True))
 
     def test_past_set_is_live(self):
         """
-        "live" --- publish_status != -1, live_as_of <= now --- is live
+        "live" --- publish_status != NEVER_AVAILABLE, live_as_of <= now --- is live
         """
         self.assertTrue(self.run_object_conditions(3, 'Past set is live', True))

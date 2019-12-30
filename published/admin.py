@@ -45,7 +45,7 @@ class PublishedAdmin(admin.ModelAdmin):
 
                 if obj.live_as_of > timezone.now():
                     dstr = obj.live_as_of.strftime("%x")
-                    return mark_safe(f"<b>Available After: {dstr}</b>")
+                    return mark_safe(f"<strong>Available After: {dstr}</strong>")
                 else:
                     return mark_safe("<strong>Available</strong>")
 
