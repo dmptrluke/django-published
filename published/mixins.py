@@ -5,6 +5,7 @@ from django.http import Http404
 
 import pytz
 
+from .models import PublishedAbstractModel
 from .utils import can_object_page_be_shown
 
 
@@ -17,10 +18,14 @@ class PublishedListMixin:
         qs = super().get_queryset()
 
         # If you're logged in you can see everything
-        user = self.request.user
-        if not user.is_authenticated:
-            qs = qs.exclude(publish_status__lt=0)
-            qs = qs.exclude(Q(publish_status=0) & Q(live_as_of__gt=datetime.now(pytz.utc)))
+        if not self.request.user.is_authenticated:
+            qs = qs.exclude(
+                publish_status=PublishedAbstractModel.NEVER_AVAILABLE
+            )
+            qs = qs.exclude(
+                Q(publish_status=PublishedAbstractModel.AVAILABLE_AFTER) &
+                Q(live_as_of__gt=datetime.now(pytz.utc))
+            )
         return qs
 
 
@@ -35,9 +40,8 @@ class PublishedDetailMixin:
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset=queryset)
-        user = self.request.user
 
-        if can_object_page_be_shown(user, obj):
+        if can_object_page_be_shown(self.request.user, obj):
             return obj
 
         raise Http404()

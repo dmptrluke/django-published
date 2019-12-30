@@ -27,7 +27,7 @@ INSTALLED_APPS = [
 
 ## Gatekeeping Models
 
-The main use for gatekeeping is where you have a model with many
+The main use for django-published is where you have a model with many
 instances, but you only want some to be "live" on the site.
 
 A good example is a generic "Article" model:
@@ -41,7 +41,7 @@ A good example is a generic "Article" model:
 >     go live at a later date.
 
 Here, all you need to do is subclass the
-<span class="title-ref">PublishedAbstractModel</span> abstract class,
+`PublishedAbstractModel` abstract class,
 e.g.:
 
 ```python
@@ -59,23 +59,21 @@ The superclass creates two fields:
     still writing the Article. You can preview it through the Admin, but
     it's not live on the site.
 
-2.  `publish_status` - this has 4 possible values:
-
-       - 0 = "use live\_as\_of" date to determine if the object is
+2.  `publish_status` - this has 3 possible values:
+       - 0 = "use live_as_of" date to determine if the object is
          available to the public
        - 1 = "always on" - hard-wired to be always available to the
          public
-       - \-1 = "permanently off" - hard-wired to NEVER be available to
+       - -1 = "permanently off" - hard-wired to NEVER be available to
          the public
 
-You set the <span class="title-ref">publish\_status</span> and
-<span class="title-ref">live\_as\_of</span> values through the Admin.
+You set the `publish_status` and `live_as_of` values through the Admin.
 
-### View Code
+### Generic Model Views
 
-Setting up gatekeeping for models is easy\! Using the Article model as
-an example, here is the corresponding view code for a listing and a
-detail view.
+Setting up django-published for generic models views is easy! Using the 
+Article model as an example, here is the corresponding view code for  
+listing and detail views.
 
 ```python
 from django.views.generic import DetailView, ListView
@@ -96,27 +94,25 @@ class ArticleDetailView(PublishedDetailMixin, DetailView):
 
 What's happening behind the scenes:
 
-1.  In the ListView, the gatekeeper is filtering the model with the
+1.  In the ListView, django-published is filtering the model with the
     following rules:
 
-    > 1.  If the user is logged into the Admin and
-    >     <span class="title-ref">publish\_status</span> \!= -1,
-    >     \_include the model [instance]()
-    > 2.  If there is no user, and the
-    >     <span class="title-ref">publish\_status</span> = 1, \_include
-    >     the model [instance]()
-    > 3.  If there is no user,
-    >     <span class="title-ref">publish\_status</span> = 0, *and* the
-    >     current date/time \>
-    >     <span class="title-ref">live\_as\_of</span>, \_include the
+     1.  If the user is logged in as staff, always include the model instance
+     2.  If there is no user, and the
+         `publish_status</span> = 1`, include
+         the model instance.
+     3.  If there is no user,
+         <span class="title-ref">publish\_status</span> = 0, *and* the
+         current date/time \>
+         <span class="title-ref">live\_as\_of</span>, \_include the
     >     model [instance]().
-    > 4.  Return the filtered list of model instances.
+     4.  Return the filtered list of model instances.
 
 2.  In the DetailView, the gatekeeper follows the same rules, but will
-    throw a 404 error, if the user is not logged into the Admin and the
+    throw a 404 error, if the user is not logged in as staff and the
     request object isn't "live" yet.
 
-\#\# Using the Gatekeeper with querysets in your own code
+### Custom Code
 
 Say there's a section on your homepage that gives a list of the three
 most recent articles. If you just create a queryset along the lines of:
@@ -126,19 +122,18 @@ most recent articles. If you just create a queryset along the lines of:
 it will include articles regardless of what their gatekeeping situation
 is.
 
-So there are two helper functions to apply the gatekeeping rules to any
+So there is a helper function to apply the gatekeeping rules to any
 queryset you generate.
 
-#### view_gatekeeper
+#### queryset_filter
 
-This takes a queryset, applies the rules and returns a filtered
-queryset.
+This takes a queryset, applies the rules and returns a filtered queryset.
 
 ```python
-from published.view_utils import view_gatekeeper
+from published.utils import queryset_filter
 ...
 recent_articles = Article.objects.order_by('-date_created')
-recent_articles = view_gatekeeper(recent_articles, is_auth)
+recent_articles = queryset_filter(recent_articles, is_auth)
 ...
 ```
 
@@ -146,47 +141,29 @@ The `is_auth` parameter allows you to
 filter based on whether the user making the request is logged in or not.
 If they are logged in, then objects that aren't live but still available
 to the Admin will "pass" through the gatekeeper. For this, you'd set
-`is_auth =
-self.request.user.is_authenticated`. (About the only time I can
-see doing this is if you want to see how a particular non-live object
-will "play" in a generated content feature.)
+`is_auth = self.request.user.is_authenticated`.
 
 I've found that I almost NEVER need that. Typically for constructed
 lists of object you want to only see what IS live, so in almost every
-case where I've used `view_gatekeeper`,
-I've set `is_auth = False`. You can still
-"see" all the non-live objects through their detail page when you're
+case where I've used `view_gatekeeper`, I've set `is_auth = False`. 
+You can still "see" all the non-live objects through their detail page when you're
 logged into the Admin.
-
-#### object_gatekeeper
-
-This takes a single object instance and returns True or False depending
-on whether it "passes" the gate.
-
-```python
-from published.view_utils import object_gatekeeper
-...
-my_article = Article.objects.first()
-am_i_avaiable = object_gatekeeper(my_article, is_auth)
-...
-```
-
-Generally, you don't need this method since the model property
-`available_to_public` already exists. The
-one case where I've needed it was when I had a list come from an outside
-source where there was an overlap with objects in one of my models. I
-wanted to show all the external object, and construct links to the
-object that overlapped but ONLY if they were live.
 
 # The Admin Interface
 
 Gatekeeper has several helper functions to customize the admin (it
 doesn't have the admin methods because there's no way to know if there
 are other ModelAdmins being used, and Python's MRO doesn't allow for
-chaning). All of them are in the
-`gatekeeper.admin_helpers` file.
+chaining). All of them are in the `gatekeeper.admin_helpers` file.
 
 ## Readonly Fields
+
+To use any of the below functions, one field needs to be added to the admin instance.
+This can be done using `add_to_readonly_fields`
+
+
+1.  A `show_publish_status` that takes the `live_as_of` and `publish_status`
+ fields and creates a human-friendly string from them
 
 Example code:
 
@@ -200,22 +177,10 @@ class MyModelAdmin(PublishedAdmin):
 
 ## List Display
 
-For the basic gatekeeper, two fields are usually added to the
-<span class="title-ref">list\_display</span> (they'll appear after
-anything set in the ModelAdmin):
+To show the status in an admin list view, `show_publish_status` needs to be added to 
+`list_display`
 
-1.  A <span class="title-ref">show\_publish\_status</span> that takes
-    the <span class="title-ref">live\_as\_of</span> and
-    <span class="title-ref">publish\_status</span> fields and creates a
-    human-friendly string from them;
-2.  A <span class="title-ref">available\_to\_public</span> model
-    property that returns True/False to show "is this available to the
-    public"?
-
-
-These can be added with the
-<span class="title-ref">gatekeeper\_add\_to\_list\_display</span>
-method, e.g.:
+This can be added automatically with the `add_to_list_display` method, e.g.:
 
 ```python
 from published.admin_helpers import add_to_list_display
