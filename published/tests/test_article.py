@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
-from published.utils import can_object_page_be_shown
+from published.utils import object_available
+
 from .models import PublishedArticleTestModel
 
 
@@ -57,7 +58,7 @@ class GatekeeperArticleTest(TestCase):
         n_offline = 0
         articles = PublishedArticleTestModel.objects.all()
         for a in articles:
-            if can_object_page_be_shown(self.user, a):
+            if object_available(self.user, a):
                 n += 1
             else:
                 n_offline += 1
@@ -69,7 +70,7 @@ class GatekeeperArticleTest(TestCase):
         test = PublishedArticleTestModel.objects.get(pk=pk)
         print("%s: expect: %s, publish_status = %d, live_as_of = %s" % (
             label, expect, test.publish_status, test.live_as_of))
-        result = can_object_page_be_shown(None, test)
+        result = object_available(None, test)
         return result
 
     def test_pending_is_not_live(self):

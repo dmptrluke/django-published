@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from .constants import *
-from .utils import can_object_page_be_shown_to_public
+from .utils import object_available_to_public
 
 
 class PublishedAbstractModel(models.Model):
@@ -27,7 +27,7 @@ class PublishedAbstractModel(models.Model):
         THIS IS ONLY TO BE USED IN TEMPLATES.
         It RELIES on the gatekeeper - so using it in front of the gatekeeper is counter-productive.
         """
-        return can_object_page_be_shown_to_public(self)
+        return object_available_to_public(self)
 
     class Meta:
         abstract = True

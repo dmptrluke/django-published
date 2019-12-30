@@ -34,14 +34,11 @@ from .constants import *
 """
 
 
-def can_object_page_be_shown(user, this_object):
-    # noinspection PyBroadException
-    try:
-        if user.is_staff:  # admin users can always see pages
-            if this_object.publish_status >= 0 or this_object.treat_as_standalone == 1:
-                return True  # I can see everything except specifically turned-off objects because I'm an admin
-    except Exception:  # noqa: E722
-        pass  # I am not logged in - continue
+def object_available(user, this_object):
+    if user is not None:
+        if user.is_staff:
+            # admin users can always see everything
+            return True
 
     if this_object.publish_status == AVAILABLE:
         return True
@@ -67,11 +64,11 @@ def can_object_page_be_shown(user, this_object):
     return False
 
 
-def can_object_page_be_shown_to_public(this_object):
-    return can_object_page_be_shown(None, this_object)
+def object_available_to_public(this_object):
+    return object_available(None, this_object)
 
 
-def queryset_filter(qs, is_auth=False):
+def queryset_filter(qs, user=None):
     """
     This is here because there are several places in other views that need to create partial querysets
     that are combined (e.g., on the Watch page, but also on the other episodic pages for things like "More from...").
@@ -83,12 +80,15 @@ def queryset_filter(qs, is_auth=False):
 
     RAD - 2018-Aug-23
     """
-    if not is_auth:
-        # If you are not logged in, then live_as_of must exist (not None) and must be in the past.
-        qs = qs.exclude(
-            publish_status=NEVER_AVAILABLE
-        )
-        qs = qs.exclude(
-            Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
-        )
+    # if a user is provided, we run admin checks
+    if user is not None:
+        if user.is_staff:
+            return qs
+
+    qs = qs.exclude(
+        publish_status=NEVER_AVAILABLE
+    )
+    qs = qs.exclude(
+        Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
+    )
     return qs

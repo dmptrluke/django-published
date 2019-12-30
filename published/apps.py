@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class GatekeeperConfig(AppConfig):
+class PublishedConfig(AppConfig):
     name = 'published'
-    verbose_name = 'Gatekeeper'
+    verbose_name = 'Django Published'

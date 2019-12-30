@@ -97,7 +97,7 @@ What's happening behind the scenes:
 1.  In the ListView, *django-published* is filtering the model with the
     following rules:
 
-     1.  If the user is logged in as staff, always include the model instance
+     1.  If the current user has admin access, always include the model instance.
      2.  If `publish_status = AVAILABLE`, include the model instance.
      3.  If `publish_status = NEVER_AVAILABLE`, DO NOT the model instance.
      4.  If `publish_status = AVAILABLE_AFTER`, *and* the current date/time is after
@@ -121,7 +121,6 @@ So there is a helper function to apply the gatekeeping rules to any
 queryset you generate.
 
 #### queryset_filter
-
 This takes a queryset, applies the rules and returns a filtered queryset.
 
 ```python
@@ -132,21 +131,34 @@ recent_articles = queryset_filter(recent_articles, is_auth)
 ...
 ```
 
-The `is_auth` parameter allows you to
-filter based on whether the user making the request is logged in or not.
-If they are logged in, then objects that aren't live but still available
-to the Admin will "pass" through the gatekeeper. For this, you'd set
-`is_auth = self.request.user.is_authenticated`.
 
-I've found that I almost NEVER need that. Typically for constructed
-lists of object you want to only see what IS live, so in almost every
-case where I've used `view_gatekeeper`, I've set `is_auth = False`.
-You can still "see" all the non-live objects through their detail page when you're
-logged into the Admin.
+By default, `queryset_filter` does not apply the same exceptions as the view
+mixins above. This means that unpublished model instances will be *not* displayed
+if the current user has admin access.
+
+The optional `user` parameter allows you to enable this special case, as seen below.
+```python
+queryset_filter(queryset, user=self.request.user)
+```
+
+#### available_to_public
+
+**Note**: This should only be used in templates
+
+If you need to check if an object is considered "available" in a Django template, you can use the
+`available_to_public` model attribute, as below.
+
+```djangotemplate
+{% for article in article_list %}
+    {% if article.available_to_public %}
+        I'm published!
+    {% endif %}
+{% endfor %}
+```
 
 # The Admin Interface
 
-Gatekeeper has several helper functions to customize the admin (it
+*django-published* has several helper functions to customize the admin (it
 doesn't have the admin methods because there's no way to know if there
 are other ModelAdmins being used, and Python's MRO doesn't allow for
 chaining). All of them are in the `gatekeeper.admin_helpers` file.
@@ -188,7 +200,7 @@ class MyModelAdmin(PublishedAdmin):
 ## Fieldsets
 
 There are two ways to include the gatekeeper fields using the
-`gatekeeper_add_to_fieldsets` method:
+`add_to_fieldsets` method:
 
 ### As a separate section
 

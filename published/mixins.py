@@ -3,7 +3,7 @@ from django.http import Http404
 from django.utils import timezone
 
 from .constants import *
-from .utils import can_object_page_be_shown
+from .utils import object_available
 
 
 class PublishedListMixin:
@@ -37,7 +37,7 @@ class PublishedDetailMixin:
     def get_object(self, queryset=None):
         obj = super().get_object(queryset=queryset)
 
-        if can_object_page_be_shown(self.request.user, obj):
+        if object_available(self.request.user, obj):
             return obj
 
         raise Http404()
