@@ -11,7 +11,7 @@ Useful in situations like below!
     future.
 
 
-This project is based on [django-model-gatekeeper](https://github.com/WGBH/django-model-gatekeeper) by 
+This project is based on [django-model-gatekeeper](https://github.com/WGBH/django-model-gatekeeper) by
 [WGBH](https://github.com/WGBH/).
 
 ## Quick start

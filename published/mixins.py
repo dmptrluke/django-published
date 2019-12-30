@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from django.db.models import Q
 from django.http import Http404
+from django.utils import timezone
 
-from .models import PublishedAbstractModel
+from .constants import *
 from .utils import can_object_page_be_shown
 
 
@@ -18,11 +17,10 @@ class PublishedListMixin:
         # If you're logged in you can see everything
         if not self.request.user.is_authenticated:
             qs = qs.exclude(
-                publish_status=PublishedAbstractModel.NEVER_AVAILABLE
+                publish_status=NEVER_AVAILABLE
             )
             qs = qs.exclude(
-                Q(publish_status=PublishedAbstractModel.AVAILABLE_AFTER) &
-                Q(live_as_of__gt=datetime.now())
+                Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
             )
         return qs
 

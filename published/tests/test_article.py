@@ -1,12 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-
-import pytz
+from django.utils import timezone
 
 from published.utils import can_object_page_be_shown
-
 from .models import PublishedArticleTestModel
 
 
@@ -19,7 +17,7 @@ class GatekeeperArticleTest(TestCase):
             email='test@test.com',
             password='1@3$5',
         )
-        now = datetime.now(pytz.utc)
+        now = timezone.now()
         last_week = now - timedelta(days=7)
         earlier = now - timedelta(days=15)
         later = now + timedelta(days=7)
@@ -67,12 +65,10 @@ class GatekeeperArticleTest(TestCase):
         self.assertEqual(n_offline, 1)
         print("Articles available to admin (should be 4): ", n, ' Offline (should be 1): ', n_offline)
 
-        ### TEST object conditions
-
     def run_object_conditions(self, pk, label, expect):
         test = PublishedArticleTestModel.objects.get(pk=pk)
         print("%s: expect: %s, publish_status = %d, live_as_of = %s" % (
-        label, expect, test.publish_status, test.live_as_of))
+            label, expect, test.publish_status, test.live_as_of))
         result = can_object_page_be_shown(None, test)
         return result
 

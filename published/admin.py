@@ -1,7 +1,8 @@
-from datetime import datetime
-
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.safestring import mark_safe
+
+from .constants import *
 
 
 class PublishedAdmin(admin.ModelAdmin):
@@ -33,16 +34,16 @@ class PublishedAdmin(admin.ModelAdmin):
         """
         This creates an HTML string showing a object's gatekeeper status in a user-friendly way.
         """
-        if obj.publish_status > 0:
+        if obj.publish_status == AVAILABLE:
             return mark_safe("<strong>Available</strong>")
-        elif obj.publish_status < 0:
+        elif obj.publish_status == NEVER_AVAILABLE:
             return mark_safe("<strong>Never Available</strong>")
-        else:  # it EQUALS zero
+        else:  # AVAILABLE_AFTER
             if obj.live_as_of is None:
                 return "N/A"
             else:
 
-                if obj.live_as_of > datetime.now():
+                if obj.live_as_of > timezone.now():
                     dstr = obj.live_as_of.strftime("%x")
                     return mark_safe(f"<b>Available After: {dstr}</b>")
                 else:

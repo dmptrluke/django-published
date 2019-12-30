@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from django.db.models import Q
+from django.utils import timezone
 
-from published.models import PublishedAbstractModel
+from .constants import *
 
 
 """
@@ -44,18 +43,18 @@ def can_object_page_be_shown(user, this_object):
     except Exception:  # noqa: E722
         pass  # I am not logged in - continue
 
-    if this_object.publish_status == PublishedAbstractModel.AVAILABLE:
+    if this_object.publish_status == AVAILABLE:
         return True
 
     if not this_object:  # this object isn't live or doesn't exist
         return False
 
-    if this_object.publish_status == PublishedAbstractModel.NEVER_AVAILABLE:
+    if this_object.publish_status == NEVER_AVAILABLE:
         return False
 
-    if this_object.publish_status == PublishedAbstractModel.AVAILABLE_AFTER:
+    if this_object.publish_status == AVAILABLE_AFTER:
         if this_object.live_as_of is not None:
-            now = datetime.now()
+            now = timezone.now()
             delta = this_object.live_as_of <= now
             if not delta:
                 return False
@@ -87,10 +86,9 @@ def queryset_filter(qs, is_auth=False):
     if not is_auth:
         # If you are not logged in, then live_as_of must exist (not None) and must be in the past.
         qs = qs.exclude(
-            publish_status=PublishedAbstractModel.NEVER_AVAILABLE
+            publish_status=NEVER_AVAILABLE
         )
         qs = qs.exclude(
-            Q(publish_status=PublishedAbstractModel.AVAILABLE_AFTER) &
-            Q(live_as_of__gt=datetime.now())
+            Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
         )
     return qs
