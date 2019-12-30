@@ -7,9 +7,6 @@ version = {}
 with open("published/version.py") as fp:
     exec(fp.read(), version)
 
-install_requires = [
-    'pytz'
-]
 
 setuptools.setup(
     name="django-published",
@@ -18,7 +15,7 @@ setuptools.setup(
     author_email="lukeroge@gmail.com",
     license='MIT License, see LICENSE',
     description="Control public visibility of model instances.",
-    install_requires=install_requires,
+    install_requires=[],
     extras_require={
         ':python_version == "3.6"': [
             'dataclasses',

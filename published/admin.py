@@ -3,17 +3,6 @@ from datetime import datetime
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-import pytz
-
-
-def is_in_the_future(dt):
-    """
-    Is this (UTC) date/time value in the future or not?
-    """
-    if dt > datetime.now(pytz.utc):
-        return True
-    return False
-
 
 class PublishedAdmin(admin.ModelAdmin):
     """
@@ -53,7 +42,7 @@ class PublishedAdmin(admin.ModelAdmin):
                 return "N/A"
             else:
 
-                if is_in_the_future(obj.live_as_of):
+                if obj.live_as_of > datetime.now():
                     dstr = obj.live_as_of.strftime("%x")
                     return mark_safe(f"<b>Available After: {dstr}</b>")
                 else:

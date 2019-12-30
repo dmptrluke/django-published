@@ -1,17 +1,6 @@
-BASIC_FIELDS = (('publish_status', 'show_publish_status', 'live_as_of',))
-
-GATEKEEPER_ACTIONS = [
-    'gatekeeper_set_to_default',
-    'gatekeeper_permanently_online',
-    'gatekeeper_take_online_now',
-    'gatekeeper_conditionally_online',
-    'gatekeeper_take_offline',
-]
-
-
 def add_to_readonly_fields():
     """
-    This adds the gatekeeper fields to the readonly_fields list.
+    This adds the django-published fields to the readonly_fields list.
 
     Usage (in your model admin):
         def get_readonly_fields(self, obj=None):
@@ -47,7 +36,7 @@ def add_to_fieldsets(section=True, collapse=False):
         )
     """
 
-    fields = BASIC_FIELDS
+    fields = (('publish_status', 'show_publish_status', 'live_as_of',))
 
     if section:
         if collapse:

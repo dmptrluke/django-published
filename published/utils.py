@@ -1,8 +1,9 @@
 from datetime import datetime
 
-import pytz
+from django.db.models import Q
 
 from published.models import PublishedAbstractModel
+
 
 """
  THIS IS THE MAIN GATEKEEPER
@@ -27,10 +28,10 @@ from published.models import PublishedAbstractModel
         a. The publish_status = 1 regardless of the live_as_of date
         b. The publish_status = 0 AND the live_as_of date exists and is in the past.
 
-    RULE 3:   Objects with a publish_status of -1 don't appear on the site to the public.
+    RULE 2:   Objects with a publish_status of -1 don't appear on the site to the public.
 
-    RULE 4:   Objects are shown on model listing pages to the public ONLY IF:
-        a.  The object is "live" (see Rule 2)
+    RULE 3:   Objects are shown on model listing pages to the public ONLY IF:
+        a.  The object is "live" (see prior rules)
 """
 
 
@@ -54,7 +55,7 @@ def can_object_page_be_shown(user, this_object):
 
     if this_object.publish_status == PublishedAbstractModel.AVAILABLE_AFTER:
         if this_object.live_as_of is not None:
-            now = datetime.now(pytz.utc)
+            now = datetime.now()
             delta = this_object.live_as_of <= now
             if not delta:
                 return False
@@ -90,6 +91,6 @@ def queryset_filter(qs, is_auth=False):
         )
         qs = qs.exclude(
             Q(publish_status=PublishedAbstractModel.AVAILABLE_AFTER) &
-            Q(live_as_of__gt=datetime.now(pytz.utc))
+            Q(live_as_of__gt=datetime.now())
         )
     return qs

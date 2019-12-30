@@ -3,8 +3,6 @@ from datetime import datetime
 from django.db.models import Q
 from django.http import Http404
 
-import pytz
-
 from .models import PublishedAbstractModel
 from .utils import can_object_page_be_shown
 
@@ -24,7 +22,7 @@ class PublishedListMixin:
             )
             qs = qs.exclude(
                 Q(publish_status=PublishedAbstractModel.AVAILABLE_AFTER) &
-                Q(live_as_of__gt=datetime.now(pytz.utc))
+                Q(live_as_of__gt=datetime.now())
             )
         return qs
 

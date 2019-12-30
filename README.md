@@ -1,29 +1,28 @@
-# Django Published
+# Django Published [![PyPI](https://img.shields.io/pypi/v/django-published)](https://pypi.org/project/django-published/)
 
-Published allows for "Set it and forget it!" behavior for your models.
+Published allows you to control the public visibility of model instances.
+Useful in situations like below!
 
-1.  You have a model where some number of instances of the model should
+    You have a model where some number of instances of the model should
     be "live". A good example of this would be an Article model, where
     you've written some articles that are "live", some that might've
     been taken down, some that are still "in progress", and others that
     are ready to "go live", but have a "go live" date that's in the
     future.
 
-Other features:
 
-1.  If you're logged into the Django Admin, you can still "see" pages
-    that aren't live (so you can easily QA things that are in progress).
+This project is based on [django-model-gatekeeper](https://github.com/WGBH/django-model-gatekeeper) by 
+[WGBH](https://github.com/WGBH/).
 
 ## Quick start
 
-1.  Add "published" to your INSTALLED_APPS setting like this:
+1.  Add "published" to your `INSTALLED_APPS`:
 ```python
 INSTALLED_APPS = [
     ...
     'published',
 ]
 ```
-
 
 ## Gatekeeping Models
 
@@ -61,8 +60,8 @@ The superclass creates two fields:
        - **AVAILABLE** = "always on" - hard-wired to be always available to the
          public
 
-         
-2.  `live_as_of` - this is the timestamp of when the object should go live, if publish_status 
+
+2.  `live_as_of` - this is the timestamp of when the object should go live, if publish_status
     is **AVAILABLE_AFTER**
 
 
@@ -71,9 +70,9 @@ You set the `publish_status` and `live_as_of` values through the admin.
 
 ### Generic Model Views
 
-Setting up _django-published_ for generic models views is easy! 
+Setting up _django-published_ for generic models views is easy!
 
-Using the Article model as an example, here is the corresponding 
+Using the Article model as an example, here is the corresponding
 view code for  listing and detail views.
 
 ```python
@@ -141,7 +140,7 @@ to the Admin will "pass" through the gatekeeper. For this, you'd set
 
 I've found that I almost NEVER need that. Typically for constructed
 lists of object you want to only see what IS live, so in almost every
-case where I've used `view_gatekeeper`, I've set `is_auth = False`. 
+case where I've used `view_gatekeeper`, I've set `is_auth = False`.
 You can still "see" all the non-live objects through their detail page when you're
 logged into the Admin.
 
@@ -173,7 +172,7 @@ class MyModelAdmin(PublishedAdmin):
 
 ## List Display
 
-To show the status in an admin list view, `show_publish_status` needs to be added to 
+To show the status in an admin list view, `show_publish_status` needs to be added to
 `list_display`
 
 This can be added automatically with the `add_to_list_display` method, e.g.:
@@ -231,3 +230,28 @@ class MyModelAdmin(PublishedAdmin):
 
 And of course you can just do it all manually with the editable `live_as_of`, `publish_status` fields and the readonly
 `show_publish_status` field.
+
+## License
+
+This software is released under the MIT license.
+```
+Copyright (c) 2019 WGBH Educational Foundation
+Copyright (c) 2019 Luke Rogers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+```
