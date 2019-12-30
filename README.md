@@ -40,7 +40,7 @@ A good example is a generic "Article" model:
 >   - Some articles are ready to be published, but you want them to only
 >     go live at a later date.
 
-Here, all you need to do is subclass the
+To start using this, all you need to do is subclass the
 `PublishedAbstractModel` abstract class,
 e.g.:
 
@@ -53,27 +53,28 @@ class Article(PublishedAbstractModel):
 
 The superclass creates two fields:
 
-1.  `live_as_of` - this is the timestamp of when the object should go live. If
-    it's not set (None) you can think of this as an "in development"
-    phase. For an Article model, you've created the instance, but you're
-    still writing the Article. You can preview it through the Admin, but
-    it's not live on the site.
-
-2.  `publish_status` - this has 3 possible values:
-       - 0 = "use live_as_of" date to determine if the object is
-         available to the public
-       - 1 = "always on" - hard-wired to be always available to the
-         public
-       - -1 = "permanently off" - hard-wired to NEVER be available to
+1.  `publish_status` - this has 3 possible values:
+       - **NEVER_AVAILABLE** = "permanently off" - hard-wired to NEVER be available to
          the public
+       - **AVAILABLE_AFTER** = "use live_as_of" date to determine if the object is
+         available to the public
+       - **AVAILABLE** = "always on" - hard-wired to be always available to the
+         public
 
-You set the `publish_status` and `live_as_of` values through the Admin.
+         
+2.  `live_as_of` - this is the timestamp of when the object should go live, if publish_status 
+    is **AVAILABLE_AFTER**
+
+
+
+You set the `publish_status` and `live_as_of` values through the admin.
 
 ### Generic Model Views
 
-Setting up django-published for generic models views is easy! Using the 
-Article model as an example, here is the corresponding view code for  
-listing and detail views.
+Setting up _django-published_ for generic models views is easy! 
+
+Using the Article model as an example, here is the corresponding 
+view code for  listing and detail views.
 
 ```python
 from django.views.generic import DetailView, ListView
@@ -94,23 +95,18 @@ class ArticleDetailView(PublishedDetailMixin, DetailView):
 
 What's happening behind the scenes:
 
-1.  In the ListView, django-published is filtering the model with the
+1.  In the ListView, *django-published* is filtering the model with the
     following rules:
 
      1.  If the user is logged in as staff, always include the model instance
-     2.  If there is no user, and the
-         `publish_status</span> = 1`, include
-         the model instance.
-     3.  If there is no user,
-         <span class="title-ref">publish\_status</span> = 0, *and* the
-         current date/time \>
-         <span class="title-ref">live\_as\_of</span>, \_include the
-    >     model [instance]().
+     2.  If `publish_status = AVAILABLE`, include the model instance.
+     3.  If `publish_status = NEVER_AVAILABLE`, DO NOT the model instance.
+     4.  If `publish_status = AVAILABLE_AFTER`, *and* the current date/time is after
+         `live_as_of`, include the model instance.
      4.  Return the filtered list of model instances.
 
-2.  In the DetailView, the gatekeeper follows the same rules, but will
-    throw a 404 error, if the user is not logged in as staff and the
-    request object isn't "live" yet.
+2.  In the DetailView, *django-published* follows the same rules but will
+    throw a 404 error if the model instance is not available.
 
 ### Custom Code
 
