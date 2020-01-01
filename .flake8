@@ -1,0 +1,10 @@
+[flake8]
+ignore = F403,F405
+max-line-length = 120
+exclude =
+    node_modules
+    .git,
+    .tox,
+    .pytest_cache,
+    *migrations/*,
+    __pycache__,
