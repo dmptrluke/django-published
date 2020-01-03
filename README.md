@@ -158,8 +158,10 @@ If you need to check if an object is considered "available" in a Django template
 
 # The Admin Interface
 
-*django-published* has several helper functions to customize the admin.
+*django-published* has several helper functions to make adding admin controls easier.
 All of them can be found in the  `django-published.admin` module.
+
+![alt test](https://raw.githubusercontent.com/dmptrluke/django-published/master/screenshots/admin.png)
 
 ## PublishedAdmin
 All of the below functions require the use of the `PublishedAdmin` abstract class instead
