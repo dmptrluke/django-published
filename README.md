@@ -40,13 +40,13 @@ A good example is a generic "Article" model:
 >     go live at a later date.
 
 To start using this, all you need to do is subclass the
-`PublishedAbstractModel` abstract class,
-e.g.:
+`PublishedModel` abstract model,
+e.g:
 
 ```python
-from published.models import PublishedAbstractModel
+from published.models import PublishedModel
 
-class Article(PublishedAbstractModel):
+class Article(PublishedModel):
     ...
 ```
 

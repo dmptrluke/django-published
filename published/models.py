@@ -5,7 +5,7 @@ from .constants import *
 from .utils import object_available_to_public
 
 
-class PublishedAbstractModel(models.Model):
+class PublishedModel(models.Model):
     publish_status = models.SmallIntegerField(
         'Publish',
         default=AVAILABLE, null=False,
@@ -31,3 +31,7 @@ class PublishedAbstractModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+# backwards compatability
+PublishedAbstractModel = PublishedModel
