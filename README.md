@@ -14,7 +14,9 @@ Useful in situations like below!
 This project is based on [django-model-gatekeeper](https://github.com/WGBH/django-model-gatekeeper) by
 [WGBH](https://github.com/WGBH/).
 
-## Quick start
+# Getting Started
+
+## Installation
 
 1.  Add "published" to your `INSTALLED_APPS`:
 ```python
@@ -24,7 +26,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-## Gatekeeping Models
+## Setting Up Models
 
 The main use for *django-published* is where you have a model with many
 instances, but you only want some to be "live" on the site.
@@ -68,7 +70,9 @@ The superclass creates two fields:
 
 You set the `publish_status` and `live_as_of` values through the admin.
 
-### Generic Model Views
+# The Frontend
+
+## Generic Model Views
 
 Setting up _django-published_ for generic models views is easy!
 
@@ -107,7 +111,7 @@ What's happening behind the scenes:
 2.  In the DetailView, *django-published* follows the same rules but will
     throw a 404 error if the model instance is not available.
 
-### Custom Code
+## Custom Code
 
 Say there's a section on your homepage that gives a list of the three
 most recent articles. If you just create a queryset along the lines of:
@@ -163,29 +167,22 @@ All of them can be found in the  `django-published.admin` module.
 
 ![alt test](https://raw.githubusercontent.com/dmptrluke/django-published/master/screenshots/admin.png)
 
-## PublishedAdmin
+## Setting Up
 All of the below functions require the use of the `PublishedAdmin` abstract class instead
 of the default `ModelAdmin` class. You can see examples of this in all of the code below.
 
-## Readonly Fields
-
-To use any of the below functions, one field needs to be added to the admin instance.
-This can be done using `add_to_readonly_fields`
-
-
-1.  A `show_publish_status` that takes the `live_as_of` and `publish_status`
- fields and creates a human-friendly string from them
-
-Example code:
+Additionally, `add_to_readonly_fields` also needs to be added to `readonly_fields` to provide some of 
+the fields needed later on.
 
 ```python
-from published.admin import PublishedAdmin, add_to_readonly_fields
+from published.admin import PublishedAdmin
 
-class MyModelAdmin(PublishedAdmin):
+class ArticleAdmin(PublishedAdmin):
     readonly_fields = ['my_field_1', 'my_field_2'] + add_to_readonly_fields()
- ```
+    ...
+```
 
-## List Display
+## Adding to List View
 
 To show the status in an admin list view, `show_publish_status` needs to be added to
 `list_display`
@@ -195,22 +192,14 @@ This can be added automatically with the `add_to_list_display` method, e.g.:
 ```python
 from published.admin import PublishedAdmin, add_to_list_display
 
-class MyModelAdmin(PublishedAdmin):
+class ArticleAdmin(PublishedAdmin):
     list_display = ['pk', 'title', ] + add_to_list_display()
 ```
 
-## Fieldsets
+## Adding to Edit View
 
-There are two ways to include the *django-published* fields using the
-`add_to_fieldsets` method:
-
-### As a separate section
-
-There's a `section` attribute (default:
-True) that returns the entire section tuple with the gatekeeper fields.
-There's also a `collapse` attribute
-(default: False) that uses the Django Admin "collapse" class.
-
+To add the admin controls to your model, use `add_to_fieldsets`. The `collapse` attribute can be used 
+to make the controls hidden by default.
 
 ```python
 from published.admin import PublishedAdmin, add_to_fieldsets
@@ -222,25 +211,7 @@ class MyModelAdmin(PublishedAdmin):
     )
 ```
 
-### Included as part of a section
-
-Or you can include them as part of another section; in this case you'd
-set `section=False`
-
-```python
-from published.admin import PublishedAdmin, add_to_fieldsets
-
-class MyModelAdmin(PublishedAdmin):
-    fieldsets = (
-        (None, {
-            'fields': (
-                (some set of fields),
-                add_to_fieldsets(section=False)
-            )
-        }),
-```
-
-And of course you can just do it all manually with the editable `live_as_of`, `publish_status` fields and the readonly
+If you don't want to use `add-to_fieldsets`, you can also add the fields manually, with the editable `live_as_of`, `publish_status` fields and the readonly
 `show_publish_status` field.
 
 ## License
