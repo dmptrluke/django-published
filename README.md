@@ -219,7 +219,7 @@ If you don't want to use `add-to_fieldsets`, you can also add the fields manuall
 This software is released under the MIT license.
 ```
 Copyright (c) 2019 WGBH Educational Foundation
-Copyright (c) 2019-2020 Luke Rogers
+Copyright (c) 2019-2023 Luke Rogers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
