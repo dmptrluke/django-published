@@ -6,16 +6,16 @@ from .utils import object_available_to_public
 
 
 class PublishedModel(models.Model):
-    publish_status = models.SmallIntegerField(
-        'Publish',
-        default=AVAILABLE, null=False,
-        choices=PUBLISH_CHOICES
-    )
+    publish_status = models.SmallIntegerField('Publish', default=AVAILABLE, null=False, choices=PUBLISH_CHOICES)
 
     live_as_of = models.DateTimeField(
         'Publish Date',
-        null=True, blank=True,
+        null=True,
+        blank=True,
     )
+
+    class Meta:
+        abstract = True
 
     def clean(self):
         if (self.publish_status == AVAILABLE_AFTER) and (self.live_as_of is None):
@@ -28,9 +28,6 @@ class PublishedModel(models.Model):
         It RELIES on the gatekeeper - so using it in front of the gatekeeper is counter-productive.
         """
         return object_available_to_public(self)
-
-    class Meta:
-        abstract = True
 
 
 # backwards compatability

@@ -3,7 +3,6 @@ from django.utils import timezone
 
 from .constants import *
 
-
 """
  THIS IS THE MAIN GATEKEEPER
 
@@ -35,10 +34,8 @@ from .constants import *
 
 
 def object_available(user, this_object):
-    if user is not None:
-        if user.is_staff:
-            # admin users can always see everything
-            return True
+    if user is not None and user.is_staff:
+        return True
 
     if this_object.publish_status == AVAILABLE:
         return True
@@ -81,14 +78,9 @@ def queryset_filter(qs, user=None):
     RAD - 2018-Aug-23
     """
     # if a user is provided, we run admin checks
-    if user is not None:
-        if user.is_staff:
-            return qs
+    if user is not None and user.is_staff:
+        return qs
 
-    qs = qs.exclude(
-        publish_status=NEVER_AVAILABLE
-    )
-    qs = qs.exclude(
-        Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
-    )
+    qs = qs.exclude(publish_status=NEVER_AVAILABLE)
+    qs = qs.exclude(Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now()))
     return qs

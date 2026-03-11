@@ -11,7 +11,6 @@ from .models import PublishedArticleTestModel
 
 
 class GatekeeperArticleTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create_superuser(
@@ -26,21 +25,26 @@ class GatekeeperArticleTest(TestCase):
         wayback = now - timedelta(days=30)
         # Test cases
         # 2. Next week - NOT LIVE YET
-        cls.a02 = PublishedArticleTestModel.objects.create(pk=2, title='Article Test 2', live_as_of=later,
-                                                           publish_status=AVAILABLE_AFTER)
+        cls.a02 = PublishedArticleTestModel.objects.create(
+            pk=2, title='Article Test 2', live_as_of=later, publish_status=AVAILABLE_AFTER
+        )
 
         # 3. Last week - IS LIVE
-        cls.a03 = PublishedArticleTestModel.objects.create(pk=3, title='Article Test 3', live_as_of=last_week,
-                                                           publish_status=AVAILABLE_AFTER)
+        cls.a03 = PublishedArticleTestModel.objects.create(
+            pk=3, title='Article Test 3', live_as_of=last_week, publish_status=AVAILABLE_AFTER
+        )
         # 4. earlier + PERM LIVE
-        cls.a04 = PublishedArticleTestModel.objects.create(pk=4, title='Article Test 4', live_as_of=earlier,
-                                                           publish_status=AVAILABLE)
+        cls.a04 = PublishedArticleTestModel.objects.create(
+            pk=4, title='Article Test 4', live_as_of=earlier, publish_status=AVAILABLE
+        )
         # 5. wayback - but put offline
-        cls.a05 = PublishedArticleTestModel.objects.create(pk=5, title='Article Test 5', live_as_of=wayback,
-                                                           publish_status=NEVER_AVAILABLE)
+        cls.a05 = PublishedArticleTestModel.objects.create(
+            pk=5, title='Article Test 5', live_as_of=wayback, publish_status=NEVER_AVAILABLE
+        )
         # 6. later - but PERM LIVE
-        cls.a06 = PublishedArticleTestModel.objects.create(pk=6, title='Article Test 6', live_as_of=later,
-                                                           publish_status=AVAILABLE)
+        cls.a06 = PublishedArticleTestModel.objects.create(
+            pk=6, title='Article Test 6', live_as_of=later, publish_status=AVAILABLE
+        )
 
     def setUp(self):
         self.client.login(username='gktest', password='1@3$5')
@@ -55,7 +59,7 @@ class GatekeeperArticleTest(TestCase):
             if a.available_to_public:
                 n += 1
         self.assertEqual(n, 3)
-        print("Articles live: should get 3, and got ", n)
+        print('Articles live: should get 3, and got ', n)
 
     def test_how_many_are_live_to_admin(self):
         # this should be 4 - you don't see anything that has publish_status = -1
@@ -69,12 +73,11 @@ class GatekeeperArticleTest(TestCase):
                 n_offline += 1
         self.assertEqual(n, 5)
         self.assertEqual(n_offline, 0)
-        print("Articles available to admin (should be 5): ", n, ' Offline (should be 0): ', n_offline)
+        print('Articles available to admin (should be 5): ', n, ' Offline (should be 0): ', n_offline)
 
     def run_object_conditions(self, pk, label, expect):
         test = PublishedArticleTestModel.objects.get(pk=pk)
-        print("%s: expect: %s, publish_status = %d, live_as_of = %s" % (
-            label, expect, test.publish_status, test.live_as_of))
+        print(f'{label}: expect: {expect}, publish_status = {test.publish_status}, live_as_of = {test.live_as_of}')
         result = object_available(None, test)
         return result
 

@@ -16,12 +16,8 @@ class PublishedListMixin:
 
         # If you're logged in you can see everything
         if not self.request.user.is_authenticated:
-            qs = qs.exclude(
-                publish_status=NEVER_AVAILABLE
-            )
-            qs = qs.exclude(
-                Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now())
-            )
+            qs = qs.exclude(publish_status=NEVER_AVAILABLE)
+            qs = qs.exclude(Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now()))
         return qs
 
 
