@@ -63,6 +63,7 @@ ignore = [
     "F403",    # star imports (used for constants)
     "F405",    # may be undefined from star imports
     "RUF012",  # mutable class attrs (false positive for Django)
+    "SIM103",  # return condition directly
     "SIM108",  # ternary operator
 ]
 
