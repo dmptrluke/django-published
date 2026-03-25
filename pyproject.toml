@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-published"
-version = "1.0.0"
+version = "1.1.0"
 description = "Control public visibility of model instances."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -36,6 +36,18 @@ packages = ["published"]
 
 [project.urls]
 Homepage = "https://github.com/dmptrluke/django-published"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15",
+]
+test = [
+    "pytest>=9.0",
+    "pytest-django>=4.11",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "published.tests.settings"
 
 [tool.ruff]
 target-version = "py310"

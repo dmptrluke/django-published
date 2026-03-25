@@ -1,12 +1,17 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from .constants import *
+from .constants import PublishStatus
 from .utils import object_available_to_public
 
 
 class PublishedModel(models.Model):
-    publish_status = models.SmallIntegerField('Publish', default=AVAILABLE, null=False, choices=PUBLISH_CHOICES)
+    publish_status = models.SmallIntegerField(
+        'Publish',
+        default=PublishStatus.AVAILABLE,
+        null=False,
+        choices=PublishStatus.choices,
+    )
 
     live_as_of = models.DateTimeField(
         'Publish Date',
@@ -18,7 +23,7 @@ class PublishedModel(models.Model):
         abstract = True
 
     def clean(self):
-        if (self.publish_status == AVAILABLE_AFTER) and (self.live_as_of is None):
+        if (self.publish_status == PublishStatus.AVAILABLE_AFTER) and (self.live_as_of is None):
             raise ValidationError({'publish_status': 'No date has been set!'})
 
     @property

@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.utils import timezone
 
-from .constants import *
+from .constants import PublishStatus
 from .utils import object_available
 
 
@@ -16,8 +16,8 @@ class PublishedListMixin:
 
         # If you're logged in you can see everything
         if not self.request.user.is_authenticated:
-            qs = qs.exclude(publish_status=NEVER_AVAILABLE)
-            qs = qs.exclude(Q(publish_status=AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now()))
+            qs = qs.exclude(publish_status=PublishStatus.NEVER_AVAILABLE)
+            qs = qs.exclude(Q(publish_status=PublishStatus.AVAILABLE_AFTER) & Q(live_as_of__gt=timezone.now()))
         return qs
 
 
