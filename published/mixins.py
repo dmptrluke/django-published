@@ -36,4 +36,4 @@ class PublishedDetailMixin:
         if object_available(self.request.user, obj):
             return obj
 
-        raise Http404()
+        raise Http404

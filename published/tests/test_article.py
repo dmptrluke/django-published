@@ -59,7 +59,6 @@ class GatekeeperArticleTest(TestCase):
             if a.available_to_public:
                 n += 1
         self.assertEqual(n, 3)
-        print('Articles live: should get 3, and got ', n)
 
     def test_how_many_are_live_to_admin(self):
         # this should be 4 - you don't see anything that has publish_status = -1
@@ -73,11 +72,9 @@ class GatekeeperArticleTest(TestCase):
                 n_offline += 1
         self.assertEqual(n, 5)
         self.assertEqual(n_offline, 0)
-        print('Articles available to admin (should be 5): ', n, ' Offline (should be 0): ', n_offline)
 
     def run_object_conditions(self, pk, label, expect):
         test = PublishedArticleTestModel.objects.get(pk=pk)
-        print(f'{label}: expect: {expect}, publish_status = {test.publish_status}, live_as_of = {test.live_as_of}')
         result = object_available(None, test)
         return result
 
