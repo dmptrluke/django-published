@@ -4,14 +4,15 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-published"
-version = "1.1.0"
+version = "1.1.1"
 description = "Control public visibility of model instances."
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Luke Rogers", email = "luke@dmptr.com"},
 ]
+keywords = ["django", "publishing", "draft", "visibility", "workflow"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -25,7 +26,6 @@ classifiers = [
     "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -37,6 +37,8 @@ packages = ["published"]
 
 [project.urls]
 Homepage = "https://github.com/dmptrluke/django-published"
+Issues = "https://github.com/dmptrluke/django-published/issues"
+Changelog = "https://github.com/dmptrluke/django-published/blob/master/CHANGELOG.md"
 
 [dependency-groups]
 dev = [
